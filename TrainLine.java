@@ -8,11 +8,14 @@ public class TrainLine {
     private Station head;
     /** Current number of stations in the line */
     private int numberOfStations;
+    /** The tail station of the train line */
+    private Station tail; 
 
     /** Basic constructor */
     public TrainLine(String name) {
         this.name = name;
         this.head = null;
+        this.tail = null;
         this.numberOfStations = 0;
     } // basic constructor
 
@@ -28,6 +31,7 @@ public class TrainLine {
 
     /**
      * Adds a new station after the last station of a trainline.
+     * Uses a tail pointer to avoid full traversal of the line 
      * 
      * @param name String with name of new station to create and add
      */
@@ -37,20 +41,50 @@ public class TrainLine {
             // No stations exist in this line. Make this new station
             // the head station of the line
             this.head = newStation;
+            this.tail = newStation; 
         } else {
-            // The line has at least one station (the head station).
-            // Find the last station and make its next station the new one.
-            Station cursor = this.head;
-            while (cursor.hasNext()) {
-                cursor = cursor.getNext();
-            }
-            // Cursor is now at the last station of the line
-            cursor.setNext(newStation);
+            this.tail.setNext(newStation); 
+            this.tail = newStation; 
         }
-        this.numberOfStations = this.numberOfStations+1; 
+        this.numberOfStations++; 
         // or this.numberOfStations++;
         // or this.numberOfStatiosn += 1;
     } // method add
+
+    /** 
+     * Returns the position of a station in the train line. 
+     * 0 for the head, 1 for the second station, etc.
+     * Returns -1 if the station is not found 
+     */
+    public int indexOf(String stationName) {
+        int index = 0; 
+        Station cursor = this.head; 
+        while (cursor != null) {
+            if (cursor.getName().equals(stationName)) {
+                return index; 
+            }
+            index++; 
+            cursor = cursor.getNext(); 
+        }
+        return -1; 
+    }
+
+    /**
+     * Checks whether the train line contains a station with the given name
+     * 
+     * @param stationName the name to search for 
+     * @return true if the station is found; false otherwise 
+     */
+    public boolean contains(String stationName) { 
+        Station cursor = this.head; 
+        while (cursor != null) { 
+            if (cursor.getName().equals(stationName)) { 
+                return true;
+            }
+            cursor = cursor.getNext(); 
+        }
+        return false; 
+    }
 
     /**
      * Finds how many stations are in a train line
@@ -70,6 +104,7 @@ public class TrainLine {
         return counter;
     } // method countStations
 
+    
 
     /**
      * String representation of the object
